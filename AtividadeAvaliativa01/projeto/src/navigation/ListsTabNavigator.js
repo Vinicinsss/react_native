@@ -1,7 +1,5 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-// Importando as telas que acabamos de criar
 import { ScrollViewScreen, FlatListScreen, SectionListScreen } from '../screens/ListScreens';
 
 const Tab = createBottomTabNavigator();
