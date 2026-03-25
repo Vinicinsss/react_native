@@ -6,5 +6,5 @@ export default function App() {
     <SafeAreaProvider>
       <CustomModalScreen animation="slide" themeColor="#2196F3" />
     </SafeAreaProvider>
-  )
+  );
 }
