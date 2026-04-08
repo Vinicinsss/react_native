@@ -4,7 +4,6 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 
 export default function WelcomeScreen({ navigation }) {
-  
   const handleLogout = () => {
     signOut(auth).then(() => {
       navigation.replace('Login');
@@ -17,7 +16,7 @@ export default function WelcomeScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Bem-vindo!</Text>
       <Text style={styles.emailText}>{auth.currentUser?.email}</Text>
-      
+
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>
