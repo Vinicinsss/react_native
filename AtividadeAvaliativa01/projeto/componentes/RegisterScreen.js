@@ -4,18 +4,9 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'reac
 // Importando o deleteUser para a lógica de Rollback
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebaseConfig';
+import { auth, db } from '../src/config/firebaseConfig';
 
 export default function RegisterScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
-
   const handleRegister = async () => {
     if (!name || !email || !password || !birthDate) {
       setModalMessage('Por favor, preencha todos os campos.');
@@ -25,13 +16,11 @@ export default function RegisterScreen({ navigation }) {
     }
 
     let userCreated = null;
-
     try {
-      // 1. Cria o usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      userCreated = userCredential.user; // Armazena a referência do usuário criado
+      userCreated = userCredential.user;
 
-      // 2. Salva os dados no Firestore Database
+      // Salva os dados do usuário no Firestore
       await setDoc(doc(db, 'users', userCreated.uid), {
         name: name,
         email: email,
@@ -39,34 +28,16 @@ export default function RegisterScreen({ navigation }) {
         createdAt: new Date().toISOString()
       });
 
-      // 3. Tudo ocorreu bem
-      setModalMessage('Cadastro realizado com sucesso!');
+      setModalMessage('Conta criada com sucesso!');
       setIsSuccess(true);
       setModalVisible(true);
-
     } catch (error) {
-      // 4. Lógica de Rollback (Reversão)
-      // Se o usuário foi criado no Auth, mas o Firestore falhou, nós o apagamos.
+      // Lógica de Rollback se o Firestore falhar
       if (userCreated && error.code !== 'auth/email-already-in-use') {
-        try {
-          await deleteUser(userCreated);
-        } catch (rollbackError) {
-          console.error("Falha ao reverter criação de usuário:", rollbackError);
-        }
+        await deleteUser(userCreated).catch(console.error);
       }
-
       setIsSuccess(false);
-      
-      // Tratamento de mensagens
-      if (error.code === 'auth/email-already-in-use') {
-        setModalMessage('Este e-mail já está em uso.');
-      } else if (error.code === 'auth/weak-password') {
-        setModalMessage('A senha deve ter pelo menos 6 caracteres.');
-      } else if (error.code === 'permission-denied') {
-        setModalMessage('Erro de permissão no Banco de Dados. Verifique as regras do Firestore.');
-      } else {
-        setModalMessage('Falha ao cadastrar: ' + error.message);
-      }
+      setModalMessage('Erro: ' + error.message);
       setModalVisible(true);
     }
   };
@@ -74,7 +45,7 @@ export default function RegisterScreen({ navigation }) {
   const handleCloseModal = () => {
     setModalVisible(false);
     if (isSuccess) {
-      navigation.goBack(); 
+      navigation.goBack();
     }
   };
 
@@ -130,7 +101,7 @@ export default function RegisterScreen({ navigation }) {
               {isSuccess ? 'Sucesso' : 'Erro'}
             </Text>
             <Text style={styles.modalMessage}>{modalMessage}</Text>
-            
+
             <TouchableOpacity style={styles.modalButton} onPress={handleCloseModal}>
               <Text style={styles.modalButtonText}>OK</Text>
             </TouchableOpacity>
@@ -166,7 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#28a745', 
+    backgroundColor: '#28a745',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -179,7 +150,7 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', 
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
