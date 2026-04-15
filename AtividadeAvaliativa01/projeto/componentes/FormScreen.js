@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { db } from '../src/config/firebaseConfig';
+import { auth, db } from '../src/config/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function FormScreen({ navigation }) {

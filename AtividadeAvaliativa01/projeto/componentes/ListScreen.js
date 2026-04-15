@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { db } from '../src/config/firebaseConfig';
+import { auth, db } from '../src/config/firebaseConfig';
 import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function ListScreen() {
