@@ -1,21 +1,13 @@
 package com.example.projeto.controller;
 
-import jakarta.validation.Valid;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.example.projeto.model.Pessoa;
 import com.example.projeto.service.PessoaService;
-
-import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/pessoas")
+@RequestMapping("/web/pessoas")
 public class PessoaWebController {
 
     private final PessoaService pessoaService;
@@ -24,56 +16,43 @@ public class PessoaWebController {
         this.pessoaService = pessoaService;
     }
 
-    // Mapeia GET /pessoas → redireciona para /pessoas/listar
     @GetMapping
-    public String index() {
-        return "redirect:/pessoas/listar";
+    public String listar(Model model) {
+        model.addAttribute("pessoas", pessoaService.listarPessoas());
+        return "pessoas/lista";
     }
 
-    // 1. Página de cadastro
-    @GetMapping("/cadastrar")
-    public String exibirFormCadastro(Model model) {
+    @GetMapping("/novo")
+    public String formulario(Model model) {
         model.addAttribute("pessoa", new Pessoa());
         return "pessoas/form";
     }
 
-    @PostMapping("/cadastrar")
-    public String cadastrarPessoa(
-            @Valid @ModelAttribute("pessoa") Pessoa pessoa,
-            BindingResult result,
-            RedirectAttributes ra) {
-
-        if (result.hasErrors()) {
-            // repopula o objeto no formulário em caso de erro
-            return "pessoas/form";
-        }
+    @PostMapping("/salvar")
+    public String salvar(@ModelAttribute Pessoa pessoa) {
         pessoaService.salvarPessoa(pessoa);
-        ra.addFlashAttribute("success", "Pessoa cadastrada com sucesso!");
-        return "redirect:/pessoas/listar";
+        return "redirect:/web/pessoas";
     }
 
-    // 2. Página de listagem
-    @GetMapping("/listar")
-    public String listarPessoas(Model model) {
-        model.addAttribute("lista", pessoaService.listarPessoas());
-        return "pessoas/lista";
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model) {
+        Pessoa pessoa = pessoaService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
+        model.addAttribute("pessoa", pessoa);
+        return "pessoas/form";
     }
 
-    // 3. Detalhes e exclusão
-    @GetMapping("/{id}")
-    public String detalhesPessoa(@PathVariable Long id, Model model) {
-        Pessoa p = pessoaService.buscarPorId(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Pessoa não encontrada, id: " + id
-            ));
-        model.addAttribute("pessoa", p);
+    @GetMapping("/detalhes/{id}")
+    public String detalhes(@PathVariable Long id, Model model) {
+        Pessoa pessoa = pessoaService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
+        model.addAttribute("pessoa", pessoa);
         return "pessoas/detalhe";
     }
 
-    @PostMapping("/{id}/excluir")
-    public String excluirPessoa(@PathVariable Long id, RedirectAttributes ra) {
+    @GetMapping("/deletar/{id}")
+    public String deletar(@PathVariable Long id) {
         pessoaService.deletarPessoa(id);
-        ra.addFlashAttribute("success", "Pessoa excluída com sucesso!");
-        return "redirect:/pessoas/listar";
+        return "redirect:/web/pessoas";
     }
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Produtos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Lista de Produtos</h1>
+        <a th:href="@{/web/produtos/novo}" class="btn btn-primary">Novo Produto</a>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${produtos}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.nome}"></td>
+                    <td th:text="${p.quantidade}"></td>
+                    <td th:text="${'R$ ' + #numbers.formatDecimal(p.valor, 1, 2)}"></td>
+                    <td>
+                        <a th:href="@{/web/produtos/detalhes/{id}(id=${p.id})}" class="btn">Ver</a>
+                        <a th:href="@{/web/produtos/editar/{id}(id=${p.id})}" class="btn">Editar</a>
+                        <a th:href="@{/web/produtos/deletar/{id}(id=${p.id})}" class="btn btn-danger">Excluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

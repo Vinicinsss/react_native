@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Produto</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Detalhes do Produto</h1>
+        
+        <div class="card">
+            <p><strong>ID:</strong> <span th:text="${produto.id}"></span></p>
+            <p><strong>Nome:</strong> <span th:text="${produto.nome}"></span></p>
+            <p><strong>Quantidade em Estoque:</strong> <span th:text="${produto.quantidade}"></span></p>
+            <p><strong>Valor Unitário:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.valor, 1, 2)}"></span></p>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/web/produtos/editar/{id}(id=${produto.id})}" class="btn btn-primary">Editar</a>
+            <a th:href="@{/web/produtos}" class="btn">Voltar para a Lista</a>
+            <a th:href="@{/web/produtos/deletar/{id}(id=${produto.id})}" class="btn btn-danger"
+               onclick="return confirm('Tem certeza?')">Excluir</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,26 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Formulário de Pessoa</title>
+    <title>Formulário de Produto</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
-        <h1 th:text="${pessoa.id == null ? 'Nova Pessoa' : 'Editar Pessoa'}"></h1>
+        <h1 th:text="${produto.id == null ? 'Novo Produto' : 'Editar Produto'}"></h1>
         
-        <form th:action="@{/web/pessoas/salvar}" th:object="${pessoa}" method="post">
+        <form th:action="@{/web/produtos/salvar}" th:object="${produto}" method="post">
             <input type="hidden" th:field="*{id}">
             
             <label>Nome:</label>
             <input type="text" th:field="*{nome}" required>
             
-            <label>Idade:</label>
-            <input type="number" th:field="*{idade}" required>
+            <label>Quantidade:</label>
+            <input type="number" th:field="*{quantidade}" required>
+            
+            <label>Valor:</label>
+            <input type="number" step="0.01" th:field="*{valor}" required>
             
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <a th:href="@{/web/pessoas}" class="btn">Cancelar</a>
+            <a th:href="@{/web/produtos}" class="btn">Cancelar</a>
         </form>
     </div>
 </body>

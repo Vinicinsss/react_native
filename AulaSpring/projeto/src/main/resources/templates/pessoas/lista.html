@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Lista de Pessoas</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- conteúdo principal -->
-    <main class="main-content">
+    <div class="container">
         <h1>Lista de Pessoas</h1>
+        <a th:href="@{/web/pessoas/novo}" class="btn btn-primary">Nova Pessoa</a>
+        
         <table>
             <thead>
                 <tr>
@@ -23,22 +22,19 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="pessoa : ${lista}">
-                    <td th:text="${pessoa.id}"></td>
-                    <td th:text="${pessoa.nome}"></td>
-                    <td th:text="${pessoa.idade}"></td>
+                <tr th:each="p : ${pessoas}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.nome}"></td>
+                    <td th:text="${p.idade}"></td>
                     <td>
-                        <a th:href="@{/pessoas/{id}(id=${pessoa.id})}" class="botao">Detalhes</a>
+                        <a th:href="@{/web/pessoas/detalhes/{id}(id=${p.id})}" class="btn">Ver</a>
+                        <a th:href="@{/web/pessoas/editar/{id}(id=${p.id})}" class="btn">Editar</a>
+                        <a th:href="@{/web/pessoas/deletar/{id}(id=${p.id})}" class="btn btn-danger"
+                           onclick="return confirm('Deseja excluir esta pessoa?')">Excluir</a>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </main>
-
-    <!-- footer opcional -->
-    <footer>
-        <p>(c) 2025 Meu App</p>
-    </footer>
+    </div>
 </body>
-
 </html>
